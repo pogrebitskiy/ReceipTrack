@@ -1,3 +1,3 @@
-# ReciepTrack
+# ReceipTrack
 ## Group Members: David Pogrebitskiy, Jacob Kulik, Jake Ashkenase, Nicolai Jacobsen
 
