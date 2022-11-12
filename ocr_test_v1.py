@@ -1,14 +1,15 @@
 # text recognition
 import cv2
 import pytesseract
+from receipt_class import Receipt
+import datetime
 
 # read image
-img = cv2.imread('receipt-ocr-original.jpg', 0)
+img = cv2.imread('target_receipt.png', 0)
 # configurations
 config = ('-l eng --oem 1 --psm 6')
 
 text = pytesseract.image_to_string(img, config=config, lang='eng')
 
-# print text
-#text = text.split('\n')
-print(text)
+r1 = Receipt(text)
+print(r1.str_lst)
