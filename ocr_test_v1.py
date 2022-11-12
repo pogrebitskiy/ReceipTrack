@@ -1,13 +1,14 @@
-from PIL import Image
-import pytesseract
-from pytesseract import Output
-import numpy as np
+# text recognition
 import cv2
+import pytesseract
 
-filename = 'receipt example.jpeg'
-image = cv2.imread(filename)
-results = pytesseract.image_to_data(image, output_type=Output.DICT)
+# read image
+img = cv2.imread('receipt-ocr-original.jpg', 0)
+# configurations
+config = ('-l eng --oem 1 --psm 6')
 
-text = pytesseract.image_to_string(image)
+text = pytesseract.image_to_string(img, config=config, lang='eng')
+
+# print text
+#text = text.split('\n')
 print(text)
-
