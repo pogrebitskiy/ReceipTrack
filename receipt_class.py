@@ -55,3 +55,7 @@ class Receipt:
                 else:
                     line_amnt = line.lower().replace('total', '').replace(' ', '').strip()
                     self.total = line_amnt
+
+    def __str__(self):
+        '''updating print statement'''
+        return f'Receipt: \nDate - {self.date}\nMerchant Phone Number - {str(self.phone)}\nSubtotal - {self.subtotal}\nTotal - {self.total}'
