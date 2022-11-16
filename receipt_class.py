@@ -18,7 +18,6 @@ class Receipt:
             try:
                 if line[2] == '/' and line[5] == '/':
                     self.date = line
-                    print(line)
             except:
                 pass
 
@@ -58,4 +57,7 @@ class Receipt:
 
     def __str__(self):
         '''updating print statement'''
+        return f'Receipt: \nDate - {self.date}\nMerchant Phone Number - {str(self.phone)}\nSubtotal - {self.subtotal}\nTotal - {self.total}'
+
+    def __repr__(self):
         return f'Receipt: \nDate - {self.date}\nMerchant Phone Number - {str(self.phone)}\nSubtotal - {self.subtotal}\nTotal - {self.total}'
