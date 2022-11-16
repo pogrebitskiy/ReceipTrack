@@ -6,7 +6,7 @@ import datetime
 import re
 
 # read image
-img = cv2.imread('target_receipt.png', 0)
+img = cv2.imread('./receipts/target_receipt.png', 0)
 # configurations
 config = ('-l eng --oem 1 --psm 6')
 

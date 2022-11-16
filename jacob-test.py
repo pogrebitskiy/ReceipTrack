@@ -12,7 +12,7 @@ import re
 
 pytesseract.pytesseract.tesseract_cmd = r'C:\Users\jakul\anaconda3\Library\bin\tesseract.exe'
 
-img = cv2.imread('receipt-ocr-original.jpg')
+img = cv2.imread('./receipts/receipt-ocr-original.jpg')
 img= cv2.fastNlMeansDenoising(img, None, 20, 7, 21)
 img = cv2.fastNlMeansDenoisingColored(img,None,20,20,7,21)
 
