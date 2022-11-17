@@ -20,6 +20,7 @@ for file in os.listdir(os.getcwd()):
     receipt.get_totals()
     receipt.get_date()
     receipt.get_phone()
+    receipt.change_due()
 
     receipts.append(receipt)
 

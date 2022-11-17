@@ -11,6 +11,8 @@ class Receipt:
         self.phone = None
         self.subtotal = None
         self.total = None
+        self.change = None
+
 
     def get_date(self):
         ''' gets the date of the transaction from the receipt'''
@@ -55,9 +57,14 @@ class Receipt:
                     line_amnt = line.lower().replace('total', '').replace(' ', '').strip()
                     self.total = line_amnt
 
+    def change_due(self):
+        for line in self.str_lst:
+            if re.search('change', line.lower()):
+                self.change = line.lower().strip().split(' ')[-1]
+
     def __str__(self):
         '''updating print statement'''
-        return f'Receipt: \nDate - {self.date}\nMerchant Phone Number - {str(self.phone)}\nSubtotal - {self.subtotal}\nTotal - {self.total}'
+        return f'Receipt: \nDate - {self.date}\nMerchant Phone Number - {str(self.phone)}\nSubtotal - {self.subtotal}\nTotal - {self.total}\nChange Due - {self.change}'
 
     def __repr__(self):
-        return f'Receipt: \nDate - {self.date}\nMerchant Phone Number - {str(self.phone)}\nSubtotal - {self.subtotal}\nTotal - {self.total}'
+        return f'Receipt: \nDate - {self.date}\nMerchant Phone Number - {str(self.phone)}\nSubtotal - {self.subtotal}\nTotal - {self.total}\nChange Due - {self.change}'
