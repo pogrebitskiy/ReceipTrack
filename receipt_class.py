@@ -12,7 +12,8 @@ class Receipt:
         self.subtotal = None
         self.total = None
         self.change = None
-
+        self.items = None
+        self.costs = None
 
     def get_date(self):
         ''' gets the date of the transaction from the receipt'''
@@ -58,9 +59,35 @@ class Receipt:
                     self.total = line_amnt
 
     def change_due(self):
+        '''getting the value associated with change due'''
         for line in self.str_lst:
             if re.search('change', line.lower()):
                 self.change = line.lower().strip().split(' ')[-1]
+
+    def get_items(self):
+        '''getting the list of items on the receipt and a list of their prices'''
+        item_line = []
+        item_cost = []
+
+        for line in self.str_lst:
+            split_line = line.strip().split(' ')
+            split_line = [val.lower() for val in split_line]
+            for item in split_line:
+                try:
+                    # checking if an item in the line ends in the style '.XX'
+                    if item[-3] == '.' and item[-2:-1].isnumeric():
+                        # making sure tax, subtotal, change are not in the line
+                        if not any(val in ['total','subtotal','tax','change','visa'] for val in split_line):
+                            item_cost.append(item)
+
+                            # adding everything before the cost index to the other list
+                            idx = split_line.index(item)
+                            item_line.append(split_line[:idx])
+                except:
+                    pass
+
+        self.items = item_line
+        self.costs = item_cost
 
     def __str__(self):
         '''updating print statement'''

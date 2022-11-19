@@ -29,6 +29,7 @@ for file in os.listdir(os.getcwd()):
     receipt.get_date()
     receipt.get_phone()
     receipt.change_due()
+    receipt.get_items()
     receipts.append(receipt)
 
 os.chdir('../')
