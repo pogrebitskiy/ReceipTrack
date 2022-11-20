@@ -19,12 +19,23 @@ class Receipt:
 
         # gets the date of the transaction from the receipt
         for line in self.str_lst:
+            if '/' in line:
+                for idx in range(len(line)):
+                    try:
+                        if line[idx:idx+2].isnumeric() and line[idx+2] == '/' and line[idx+5] == '/':
+                            if line[idx+8].isnumeric() and line[idx+9].isnumeric():
+                                self.date = line[idx:idx+10]
+                            else:
+                                self.date = line[idx:idx+8]
+                    except:
+                        pass
+            '''   
             try:
                 if line[2] == '/' and line[5] == '/':
                     self.date = line
             except:
                 pass
-
+            '''
         # gets the phone number associated with the receipt
         for line in self.str_lst:
             for item in line.split(' '):
@@ -71,7 +82,9 @@ class Receipt:
         for line in self.str_lst:
             split_line = line.strip().split(' ')
             split_line = [val.lower() for val in split_line]
+
             for item in split_line:
+
                 try:
                     # checking if an item in the line ends in the style '.XX'
                     if item[-3] == '.' and item[-2:-1].isnumeric():
@@ -101,6 +114,7 @@ class Receipt:
                             else:
                                 item_id.append(None)
                                 item_line.append(non_cost_line)
+
                 except:
                     pass
 

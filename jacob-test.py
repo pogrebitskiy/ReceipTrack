@@ -25,13 +25,9 @@ for file in os.listdir(os.getcwd()):
     text = pytesseract.image_to_string(img, config=custom_config, lang='eng')
 
     receipt = Receipt(text)
-    receipt.get_totals()
-    receipt.get_date()
-    receipt.get_phone()
-    receipt.change_due()
-    receipt.get_items()
     receipts.append(receipt)
+    print(receipt.str_lst)
 
 os.chdir('../')
 
-print(receipts)
+#print(receipts)
