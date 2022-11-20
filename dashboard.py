@@ -1,6 +1,7 @@
 import dash_bootstrap_components as dbc
-from dash import Dash, html, dcc, Input, Output
+from dash import Dash, html, dcc, Input, Output, State
 from dash_bootstrap_templates import load_figure_template
+import datetime
 
 app = Dash(__name__,
            external_stylesheets=[dbc.themes.LUX, 'https://codepen.io/chriddyp/pen/bWLwgP.css']
@@ -9,7 +10,6 @@ load_figure_template('LUX')
 
 app.layout = html.Div([
     html.H1('ReceipTrack', style={'textAlign': 'center'}),
-    html.Hr(),
     dcc.Upload(
         id='upload-image',
         children=html.Div([
@@ -23,7 +23,8 @@ app.layout = html.Div([
             'borderRadius': '5px',
             'textAlign': 'center',
             'margin': '10px'
-        }
+        },
+        multiple=True
     ),
     html.Div(id='output-image-upload'),
 ])
@@ -31,13 +32,13 @@ app.layout = html.Div([
 
 @app.callback(Output('output-image-upload', 'children'),
               Input('upload-image', 'contents'))
-def update_output(image):
-    if image is not None:
+def update_output(list_of_contents):
+    if list_of_contents is not None:
         children = [
-            html.Div([html.Center(html.Img(src=image, style={'width': '40%',
-                                                             'height': '40%',
-                                                             'textAlign': 'center'}))])
-        ]
+            html.Div([html.Img(src=contents, style={'display': 'inline-block',
+                                                     'width': '50%',
+                                                     'margin-left': '10px'})]) for contents
+            in list_of_contents]
         return children
 
 
