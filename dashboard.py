@@ -1,7 +1,13 @@
+import io
+
 import dash_bootstrap_components as dbc
-from dash import Dash, html, dcc, Input, Output, State
+from dash import Dash, html, dcc, Input, Output, State, dash_table
 from dash_bootstrap_templates import load_figure_template
 import datetime
+from main import read_receipt
+import base64
+from PIL import Image
+
 
 app = Dash(__name__,
            external_stylesheets=[dbc.themes.LUX, 'https://codepen.io/chriddyp/pen/bWLwgP.css']
@@ -34,11 +40,29 @@ app.layout = html.Div([
               Input('upload-image', 'contents'))
 def update_output(list_of_contents):
     if list_of_contents is not None:
-        children = [
-            html.Div([html.Img(src=contents, style={'display': 'inline-block',
-                                                     'width': '50%',
-                                                     'margin-left': '10px'})]) for contents
-            in list_of_contents]
+        children = []
+        '''html.Div([html.Img(src=contents, style={'display': 'inline-block',
+                                                 'width': '50%',
+                                                 'margin-left': '10px'})]) for contents'''
+        for rec in list_of_contents:
+            # Split encoded string
+            content_type, content_string = rec.split(',')
+            rec = content_string
+
+            # Decode the string back to an image
+            img = Image.open(io.BytesIO(base64.b64decode(rec)))
+            img.save('temp.jpg')
+
+            # Read the redecoded image
+            rec = read_receipt('temp.jpg')
+
+            # Create a table from the receipt
+            children.append(html.Div([dbc.Table([html.Tbody([html.Tr([html.Td('Date'), html.Td(rec.date)]),
+                                                             html.Tr([html.Td('Phone Number'), html.Td(rec.phone)]),
+                                                             html.Tr([html.Td('Subtotal'), html.Td(rec.subtotal)]),
+                                                             html.Tr([html.Td('Total'), html.Td(rec.total)]),
+                                                             html.Tr([html.Td('Change Due'), html.Td(rec.change)])])])]))
+
         return children
 
 

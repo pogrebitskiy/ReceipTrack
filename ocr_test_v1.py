@@ -1,7 +1,7 @@
 # text recognition
 import cv2
 import pytesseract
-from receipt_class import Receipt
+from Receipt import Receipt
 import datetime
 import re
 import os
@@ -28,6 +28,7 @@ for file in os.listdir(os.getcwd()):
 os.chdir('../')
 
 print(receipts[0])
+print(receipts[0].items)
 
 '''
 # read image

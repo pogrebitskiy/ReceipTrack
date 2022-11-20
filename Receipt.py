@@ -3,10 +3,10 @@ import phonenumbers
 import re
 
 class Receipt:
-    def __init__(self, str):
+    def __init__(self, init_str):
         '''constructor'''
-        self.str = str
-        self.str_lst = str.split('\n')
+        self.str = init_str
+        self.str_lst = init_str.split('\n')
         self.date = None
         self.phone = None
         self.subtotal = None
@@ -17,8 +17,7 @@ class Receipt:
         self.quantities = None
         self.ids = None
 
-    def get_date(self):
-        ''' gets the date of the transaction from the receipt'''
+        # gets the date of the transaction from the receipt
         for line in self.str_lst:
             try:
                 if line[2] == '/' and line[5] == '/':
@@ -26,8 +25,7 @@ class Receipt:
             except:
                 pass
 
-    def get_phone(self):
-        '''gets the phone number associated with the receipt'''
+        # gets the phone number associated with the receipt
         for line in self.str_lst:
             for item in line.split(' '):
                 line = item.replace(' ', '')
@@ -48,8 +46,7 @@ class Receipt:
                     except:
                         pass
 
-    def get_totals(self):
-        '''getting the subtotal and total of the receipt'''
+        # getting the subtotal and total of the receipt
         for line in self.str_lst:
             # using the regex search function to narrow down to the proper lines
             if re.search('total', line.lower()):
@@ -60,14 +57,12 @@ class Receipt:
                     line_amnt = line.lower().replace('total', '').replace(' ', '').strip()
                     self.total = line_amnt
 
-    def change_due(self):
-        '''getting the value associated with change due'''
+        # getting the value associated with change due
         for line in self.str_lst:
             if re.search('change', line.lower()):
                 self.change = line.lower().strip().split(' ')[-1]
 
-    def get_items(self):
-        '''getting the list of items on the receipt and a list of their prices'''
+        # getting the list of items on the receipt and a list of their prices
         item_line = []
         item_cost = []
         item_quantity = []

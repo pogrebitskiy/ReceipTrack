@@ -6,7 +6,7 @@ import numpy as np
 from pytesseract import Output
 import re
 import cv2
-from receipt_class import Receipt
+from Receipt import Receipt
 import datetime
 import re
 import os
