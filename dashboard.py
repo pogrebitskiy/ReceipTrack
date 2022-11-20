@@ -61,7 +61,8 @@ def update_output(list_of_contents):
                                                              html.Tr([html.Td('Phone Number'), html.Td(rec.phone)]),
                                                              html.Tr([html.Td('Subtotal'), html.Td(rec.subtotal)]),
                                                              html.Tr([html.Td('Total'), html.Td(rec.total)]),
-                                                             html.Tr([html.Td('Change Due'), html.Td(rec.change)])])])]))
+                                                             html.Tr([html.Td('Change Due'), html.Td(rec.change)])])])], style={'margin-left':'10px'}))
+            children.append(html.Hr())
 
         return children
 

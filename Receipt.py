@@ -52,10 +52,10 @@ class Receipt:
             if re.search('total', line.lower()):
                 if re.search('sub', line.lower()):
                     line_amnt = line.lower().replace('total', '').replace('sub', '').replace(' ', '').strip()
-                    self.subtotal = line_amnt
+                    self.subtotal = re.sub(r'[^(0-9|.]', '', line_amnt)
                 else:
                     line_amnt = line.lower().replace('total', '').replace(' ', '').strip()
-                    self.total = line_amnt
+                    self.total = re.sub(r'[^(0-9|.)]', '', line_amnt)
 
         # getting the value associated with change due
         for line in self.str_lst:
