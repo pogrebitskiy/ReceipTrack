@@ -14,6 +14,8 @@ class Receipt:
         self.change = None
         self.items = None
         self.costs = None
+        self.quantities = None
+        self.ids = None
 
     def get_date(self):
         ''' gets the date of the transaction from the receipt'''
@@ -68,6 +70,8 @@ class Receipt:
         '''getting the list of items on the receipt and a list of their prices'''
         item_line = []
         item_cost = []
+        item_quantity = []
+        item_id = []
 
         for line in self.str_lst:
             split_line = line.strip().split(' ')
@@ -82,12 +86,33 @@ class Receipt:
 
                             # adding everything before the cost index to the other list
                             idx = split_line.index(item)
-                            item_line.append(split_line[:idx])
+                            non_cost_line = split_line[:idx]
+
+                            if split_line[0].isnumeric():
+                                item_quantity.append(split_line[0])
+                                # removing quantity
+                                non_cost_line = non_cost_line[1:]
+                            else:
+                                item_quantity.append(1)
+
+                            # making sure the last item is not one character before checking if it is an ID
+                            if len(non_cost_line[-1]) == 1:
+                                non_cost_line = non_cost_line[:-1]
+
+                            # checking for an id
+                            if non_cost_line[-1].isnumeric():
+                                item_id.append(non_cost_line[-1])
+                                item_line.append(non_cost_line[:-1])
+                            else:
+                                item_id.append(None)
+                                item_line.append(non_cost_line)
                 except:
                     pass
 
         self.items = item_line
         self.costs = item_cost
+        self.ids = item_id
+        self.quantities = item_quantity
 
     def __str__(self):
         '''updating print statement'''
