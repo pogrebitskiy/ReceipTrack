@@ -10,12 +10,14 @@ from PIL import Image
 import plotly.express as px
 import pandas as pd
 
-
+# Create dash app with themes to look good
 app = Dash(__name__,
            external_stylesheets=[dbc.themes.LUX, 'https://codepen.io/chriddyp/pen/bWLwgP.css']
            )
 load_figure_template('LUX')
 
+
+# Build the layout of the app
 app.layout = html.Div([
     html.H1('ReceipTrack', style={'textAlign': 'center'}),
     dcc.Upload(
@@ -34,12 +36,14 @@ app.layout = html.Div([
         },
         multiple=True
     ),
+    # Allocate space for graphs and tables
     html.Div(id='output-table-upload', style={'width': '40%', 'display': 'inline-block'}),
     dcc.Graph(id='graph1', style={'width': '60%', 'display': 'inline-block', 'verticalAlign': 'top'})
 
 
 ])
 
+# Combined callback for the file upload and graphing
 @app.callback(Output('output-table-upload', 'children'),
               Output('graph1', 'figure'),
               Output('graph2', 'figure'),
@@ -48,6 +52,7 @@ def update_output(list_of_contents):
     if list_of_contents is not None:
         children = []
         recs = []
+        # Block to display the image, not needed anymore
         '''html.Div([html.Img(src=contents, style={'display': 'inline-block',
                                                  'width': '50%',
                                                  'margin-left': '10px'})]) for contents'''
@@ -75,6 +80,7 @@ def update_output(list_of_contents):
             children.append(html.Hr())
             recs.append(rec)
 
+    # Use the receipt data to bake a bar chart
     prices = [float(rec.total) for rec in recs]
     dates = [pd.to_datetime(rec.date) for rec in recs]
     fig1 = px.bar(x=dates, y=prices, labels={'x':'Date', 'y':'Total'})
@@ -82,4 +88,4 @@ def update_output(list_of_contents):
     return children, fig1
 
 if __name__ == '__main__':
-    app.run_server(debug=True, port=8051)
+    app.run_server(debug=True)
