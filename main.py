@@ -19,5 +19,5 @@ def read_receipt(filepath):
     return Receipt(text)
 
 if __name__ == '__main__':
-    rec = read_receipt('receipts/receipt2.jpeg')
+    rec = read_receipt('receipts/input-9.png')
     print(rec)

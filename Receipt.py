@@ -1,6 +1,7 @@
 import datetime
 import phonenumbers
 import re
+import numpy as np
 
 class Receipt:
     def __init__(self, init_str):
