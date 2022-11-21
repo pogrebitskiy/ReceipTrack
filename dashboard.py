@@ -46,7 +46,6 @@ app.layout = html.Div([
 # Combined callback for the file upload and graphing
 @app.callback(Output('output-table-upload', 'children'),
               Output('graph1', 'figure'),
-              Output('graph2', 'figure'),
               Input('upload-image', 'contents'))
 def update_output(list_of_contents):
     if list_of_contents is not None:
@@ -88,4 +87,4 @@ def update_output(list_of_contents):
     return children, fig1
 
 if __name__ == '__main__':
-    app.run_server(debug=True)
+    app.run_server(debug=False)
