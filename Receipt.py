@@ -31,6 +31,7 @@ class Receipt:
                     except:
                         pass
             '''   
+            # old method
             try:
                 if line[2] == '/' and line[5] == '/':
                     self.date = line
@@ -83,15 +84,17 @@ class Receipt:
         for line in self.str_lst:
             split_line = line.strip().split(' ')
             split_line = [val.lower() for val in split_line]
-
+            #print(split_line)
             for item in split_line:
 
                 try:
+                    #test_item = ''.join(c for c in item if c.isdigit() or c == '.')
                     # checking if an item in the line ends in the style '.XX'
-                    if item[-3] == '.' and item[-2:-1].isnumeric():
+                    if (item[-3] == '.' and item[-2:-1].isnumeric()) or (item.isnumeric() and len(split_line[split_line.index(item) + 1]) == 2):
                         # making sure tax, subtotal, change are not in the line
                         if not any(val in ['total','subtotal','tax','change','visa'] for val in split_line):
-                            item_cost.append(item)
+                            if '.' in item:
+                                item_cost.append(item)
 
                             # adding everything before the cost index to the other list
                             idx = split_line.index(item)
@@ -108,6 +111,7 @@ class Receipt:
                             if len(non_cost_line[-1]) == 1:
                                 non_cost_line = non_cost_line[:-1]
 
+                            #print(non_cost_line)
                             # checking for an id
                             if non_cost_line[-1].isnumeric():
                                 item_id.append(non_cost_line[-1])
