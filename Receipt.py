@@ -1,7 +1,7 @@
 import datetime
-import phonenumbers
 import re
 import numpy as np
+from phone_identifier import find_phonenumber
 
 class Receipt:
     def __init__(self, init_str):
@@ -38,26 +38,10 @@ class Receipt:
             except:
                 pass
             '''
+
         # gets the phone number associated with the receipt
-        for line in self.str_lst:
-            for item in line.split(' '):
-                line = item.replace(' ', '')
-                if '(' and ')' in line:
-                    try:
-                        phone_number = phonenumbers.parse(line, 'US')
-                        if phonenumbers.is_possible_number(phone_number):
-                            if len(line) > 9:
-                                self.phone = phone_number
-                    except:
-                        pass
-                elif len(line.split('-')[0]) == 3:
-                    try:
-                        phone_number = phonenumbers.parse(line, 'US')
-                        if phonenumbers.is_possible_number(phone_number):
-                            if len(line) > 9:
-                                self.phone = line
-                    except:
-                        pass
+        phone = find_phonenumber(self.str_lst)
+        self.phone = phone
 
         # getting the subtotal and total of the receipt
         for line in self.str_lst:
