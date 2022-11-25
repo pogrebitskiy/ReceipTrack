@@ -2,6 +2,7 @@ import datetime
 import re
 import numpy as np
 from phone_identifier import find_phonenumber
+from item_price_identifier import find_item_prices
 
 class Receipt:
     def __init__(self, init_str):
@@ -17,6 +18,7 @@ class Receipt:
         self.costs = None
         self.quantities = None
         self.ids = None
+        self.item_lst = None
 
         # gets the date of the transaction from the receipt
         for line in self.str_lst:
@@ -112,9 +114,12 @@ class Receipt:
         self.ids = item_id
         self.quantities = item_quantity
 
+        price_item_lst = find_item_prices(self.str_lst, self.total)
+        self.item_lst = price_item_lst
+
     def __str__(self):
         '''updating print statement'''
-        return f'Receipt: \nDate - {self.date}\nMerchant Phone Number - {str(self.phone)}\nSubtotal - {self.subtotal}\nTotal - {self.total}\nChange Due - {self.change}'
+        return f'Receipt: \nDate - {self.date}\nMerchant Phone Number - {str(self.phone)}\nSubtotal - {self.subtotal}\nTotal - {self.total}\nChange Due - {self.change}\nNumber of items - {len(self.items)}'
 
     def __repr__(self):
-        return f'Receipt: \nDate - {self.date}\nMerchant Phone Number - {str(self.phone)}\nSubtotal - {self.subtotal}\nTotal - {self.total}\nChange Due - {self.change}'
+        return f'Receipt: \nDate - {self.date}\nMerchant Phone Number - {str(self.phone)}\nSubtotal - {self.subtotal}\nTotal - {self.total}\nChange Due - {self.change}\nNumber of items - {len(self.items)}'
