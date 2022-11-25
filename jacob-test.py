@@ -26,8 +26,9 @@ for file in os.listdir(os.getcwd()):
 
     receipt = Receipt(text)
     receipts.append(receipt)
-    print(receipt.str_lst)
+    print(receipt.item_lst)
 
 os.chdir('../')
+
 
 #print(receipts)

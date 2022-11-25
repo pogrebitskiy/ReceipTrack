@@ -5,7 +5,7 @@ def find_item_prices(str_lst, total):
     price_lst = None
     try:
         price_lst = combination_method(str_lst, total)
-        if price_lst != None:
+        if price_lst:
             return price_lst
     except:
         pass
@@ -26,15 +26,25 @@ def combination_method(str_lst, total):
         # iterate over line elements
         for elmt in line_lst:
             # check if element is a pure string
-            if elmt.isalpha():
+            if elmt.isalpha() and len(elmt) > 1:
                 # append to item name
                 item_name.append(elmt.upper())
         # join the item name to a string
         item_name = ' '.join(item_name)
+
+        # periods can be confused for commas, so fixing it here
+        line_lst = [element.replace(',','.') for element in line_lst]
+
         # iterate over each element in line
         for elmt in line_lst:
             # check if a period is within element, which could signify a float (item price)
             if '.' in elmt:
+                try:
+                    # when buying multiple of an item, we do not want to get the price of one item
+                    if line_lst[line_lst.index(elmt) - 1] == '@':
+                        continue
+                except:
+                    pass
                 # the ocr may identify '-' as '~', so clean this
                 elmt = elmt.replace('~', '-')
                 # remove $ symbols
@@ -66,6 +76,9 @@ def combination_method(str_lst, total):
 
 def find_matching_sum(number_lst, total):
     '''Use combinations to find a subset that has a sum equal to the total'''
+    if sum(number_lst) == total:
+        return set(number_lst)
+
     for L in reversed(range(len(number_lst))):
         for subset in itertools.combinations(number_lst, L):
             if sum(subset) == total:
