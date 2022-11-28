@@ -3,6 +3,7 @@ import re
 import numpy as np
 from phone_identifier import find_phonenumber
 from item_price_identifier import find_item_prices
+import pandas as pd
 
 class Receipt:
     def __init__(self, init_str):
@@ -115,7 +116,9 @@ class Receipt:
         self.quantities = item_quantity
 
         price_item_lst = find_item_prices(self.str_lst, self.total)
+
         self.item_lst = price_item_lst
+        self.item_df = pd.DataFrame(data=price_item_lst, columns=['Item_Name', 'Price'])
 
     def __str__(self):
         '''updating print statement'''
