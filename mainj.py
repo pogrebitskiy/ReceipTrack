@@ -20,5 +20,6 @@ def read_receipt(filepath):
     return Receipt(text)
 
 if __name__ == '__main__':
-    rec = read_receipt('receipts/receipt2.jpeg')
-    print(rec)
+    rec = read_receipt('receipts/receipt-ocr-original.jpg')
+    print(rec.item_lst)
+    #print(rec.identification_lst)

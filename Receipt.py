@@ -4,6 +4,7 @@ import numpy as np
 from phone_identifier import find_phonenumber
 from item_price_identifier import find_item_prices
 import pandas as pd
+from Food_Identification import group_identify
 
 class Receipt:
     def __init__(self, init_str):
@@ -20,6 +21,7 @@ class Receipt:
         self.quantities = None
         self.ids = None
         self.item_lst = None
+        self.identification_lst = None
 
         # gets the date of the transaction from the receipt
         for line in self.str_lst:
@@ -110,6 +112,9 @@ class Receipt:
                 except:
                     pass
 
+
+
+
         self.items = item_line
         self.costs = item_cost
         self.ids = item_id
@@ -117,8 +122,24 @@ class Receipt:
 
         price_item_lst = find_item_prices(self.str_lst, self.total)
 
+        '''
+        COMMENTING THIS SECTION OUT BECAUSE THERE ARE PROBLEMS WITH USING THE DF DEFINED IN THE OTHER FILE
+        # identifying all items
+        iden_lst = []
+        for item, price in price_item_lst:
+            print(item)
+            identified = group_identify(item)
+            print(identified)
+            iden_lst.append(identified)
+            
+        self.identification_lst = iden_lst
+        '''
+
         self.item_lst = price_item_lst
         self.item_df = pd.DataFrame(data=price_item_lst, columns=['Item_Name', 'Price'])
+
+
+
 
     def __str__(self):
         '''updating print statement'''

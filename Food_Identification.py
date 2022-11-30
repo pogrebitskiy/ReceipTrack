@@ -10,10 +10,11 @@ Used in order to identify food categories for different foods using a dataset of
 """
 from itertools import chain, combinations
 import pandas as pd
+FILE = "generic-food.csv"
 
 
 # create a dataframe for our food catagory data
-food_data = pd.read_csv("generic-food.csv")
+food_data = pd.read_csv(FILE)
 food_data = food_data[["FOOD NAME", "GROUP", "SUB GROUP"]]
 
 
@@ -31,6 +32,8 @@ new_food_names = list(map(lambda food: food.lower(), new_food_names))
 
 # put food names back into data set, change all to lowercase
 food_data["FOOD NAME"] = new_food_names
+
+
 
 print(food_data.head())
 
@@ -62,6 +65,12 @@ def abbreviations(food):
             abbrev = abbrev.replace(vowel, "", 1)
         abbrev_options.append(abbrev)
 
+    # adding certain words that make up an abbreviation separately to improve with classification
+    for abbrev in abbrev_options:
+        new_abbrevs = abbrev.split(' ')
+        for new_abbrev in new_abbrevs:
+            if new_abbrev not in abbrev_options:
+                abbrev_options.append(new_abbrev)
     # deal with any cases where the food is made plural
     plural_food = food + "s"
     abbrev_options.append(plural_food)
@@ -93,7 +102,6 @@ def group_identify(food):
             group = row["GROUP"]
             break
 
-
         elif any(item in food_split for item in abbreviations(row["FOOD NAME"])):
             group = row["GROUP"]
             break
@@ -105,7 +113,7 @@ def group_identify(food):
 
 
 def main():
-    test_food = "whole mlk"
+    test_food = "yellowtail sushi"
     print(group_identify(test_food))
 
 
