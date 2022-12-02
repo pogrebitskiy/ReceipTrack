@@ -21,5 +21,5 @@ def read_receipt(filepath):
 
 if __name__ == '__main__':
     rec = read_receipt('receipts/receipt-ocr-original.jpg')
-    print(rec.item_lst)
+    print(rec.category_df)
     #print(rec.identification_lst)
