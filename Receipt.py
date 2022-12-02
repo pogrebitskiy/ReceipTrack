@@ -4,7 +4,7 @@ import numpy as np
 from phone_identifier import find_phonenumber
 from item_price_identifier import find_item_prices
 import pandas as pd
-from Food_Identification import group_identify
+from Food_Identification import categorize_foods
 
 class Receipt:
     def __init__(self, init_str):
@@ -138,7 +138,11 @@ class Receipt:
         self.item_lst = price_item_lst
         self.item_df = pd.DataFrame(data=price_item_lst, columns=['Item_Name', 'Price'])
 
+        category_lst = [item for item, price in price_item_lst]
+        category_df = pd.DataFrame(data=category_lst, columns=['Item_Name'])
 
+        categorize_foods(category_df)
+        self.category_df = category_df
 
 
     def __str__(self):
