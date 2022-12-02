@@ -137,12 +137,14 @@ class Receipt:
 
         self.item_lst = price_item_lst
         self.item_df = pd.DataFrame(data=price_item_lst, columns=['Item_Name', 'Price'])
+        try:
+            category_lst = [item for item, price in price_item_lst]
+            category_df = pd.DataFrame(data=category_lst, columns=['Item_Name'])
 
-        category_lst = [item for item, price in price_item_lst]
-        category_df = pd.DataFrame(data=category_lst, columns=['Item_Name'])
-
-        categorize_foods(category_df)
-        self.category_df = category_df
+            categorize_foods(category_df)
+            self.category_df = category_df
+        except:
+            pass
 
 
     def __str__(self):
