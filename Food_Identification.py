@@ -89,6 +89,7 @@ def group_identify(food_df, brand_df, food):
     return group
 
 def categorize_foods(item_df):
+    # --------------------------------------------------------------- Food Data
     # create a dataframe for our food catagory data
     food_data = pd.read_csv("generic-food.csv")
     food_data = food_data[["FOOD NAME", "GROUP", "SUB GROUP"]]
@@ -108,17 +109,8 @@ def categorize_foods(item_df):
     # put food names back into data set, change all to lowercase
     food_data["FOOD NAME"] = new_food_names
     item_df['Category'] = None
-    # iterate over the item df
-    for ind in item_df.index:
-        item_name = item_df['Item_Name'][ind]
 
-        # categorizing each item
-        category = group_identify(food_data, item_name)
-        item_df['Category'][ind] = category
-
-    return item_df
-
-def categorize_brands():
+    # --------------------------------------------------------------- Brand Data
     # read in the data and pull out the columns we are using
     category_data = pd.read_csv("brand_data.csv")
     category_data = category_data[['DEPARTMENT', 'BRAND']]
@@ -137,6 +129,14 @@ def categorize_brands():
 
     category_data = category_data[category_data["BRAND"].isin(single_cat_brands)]
 
-    return category_data
+    # -------------------------------------------------------------------- Label each item
+    # iterate over the item df
+    for ind in item_df.index:
+        item_name = item_df['Item_Name'][ind]
 
-print(categorize_brands())
+        # categorizing each item
+        category = group_identify(food_data, category_data, item_name)
+        item_df['Category'][ind] = category
+
+    return item_df
+
