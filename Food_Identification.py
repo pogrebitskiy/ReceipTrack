@@ -5,8 +5,6 @@ Used in order to identify food categories for different foods using a dataset of
  - look into expanding for more food?
  - lemon dressing
  - what if when you add items that are "other" you can specify a category for them and it updates the directory of food
-
-
 """
 from itertools import chain, combinations
 import pandas as pd
@@ -31,6 +29,7 @@ def abbreviations(food):
 
     # get all combinations of these vowels
     vowel_combos = list(chain.from_iterable(combinations(vowels, r) for r in range(len(vowels) + 1)))
+    vowel_combos = [combo for combo in vowel_combos if len(combo) <= 2]
 
     abbrev_options = []
     for combo in vowel_combos:
@@ -47,7 +46,7 @@ def abbreviations(food):
     return abbrev_options
 
 
-def group_identify(food_df, food):
+def group_identify(food_df, brand_df, food):
     """ find the group for a food
 
     :param food:
@@ -73,6 +72,17 @@ def group_identify(food_df, food):
 
         elif any(item in food_split for item in abbreviations(row["FOOD NAME"])):
             group = row["GROUP"]
+            break
+
+
+    # find the food brand
+    for index, row in brand_df.iterrows():
+
+        # split the food into seperate words
+        food_split = food.split()
+
+        if row["BRAND"] in food_split:
+            group = row["DEPARTMENT"]
             break
 
     # return the group of the food
@@ -107,3 +117,26 @@ def categorize_foods(item_df):
         item_df['Category'][ind] = category
 
     return item_df
+
+def categorize_brands():
+    # read in the data and pull out the columns we are using
+    category_data = pd.read_csv("brand_data.csv")
+    category_data = category_data[['DEPARTMENT', 'BRAND']]
+
+    # we only want unique combos of department and brand
+    category_data = category_data.drop_duplicates(subset=['DEPARTMENT', 'BRAND'])
+
+    # create list for valid brands who have food in only one catagory
+    single_cat_brands = []
+
+    # pull out only brands in one category
+    for index, row in category_data.iterrows():
+        brand_rows = category_data[category_data["BRAND"] == row["BRAND"]]
+        if len(brand_rows) == 1:
+            single_cat_brands.append(row['BRAND'])
+
+    category_data = category_data[category_data["BRAND"].isin(single_cat_brands)]
+
+    return category_data
+
+print(categorize_brands())
