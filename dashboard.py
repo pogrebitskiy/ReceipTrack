@@ -15,9 +15,21 @@ import pandas as pd
 from tabulate import tabulate
 from tqdm import tqdm
 import subprocess
+import plotly.graph_objects as go
+
 
 subprocess.check_call(([sys.executable, "-m", "pip", "install", "tqdm"]))
 subprocess.check_call(([sys.executable, "-m", "pip", "install", "dash-bootstrap-components"]))
+
+
+def blank_figure():
+    """Function to show blank page instead of graph axis"""
+    fig = go.Figure(go.Scatter(x=[], y=[]))
+    fig.update_layout(template=None)
+    fig.update_xaxes(showgrid=False, showticklabels=False, zeroline=False)
+    fig.update_yaxes(showgrid=False, showticklabels=False, zeroline=False)
+
+    return fig
 
 # Create dash app with themes to look good
 app = Dash(__name__,
@@ -57,10 +69,10 @@ app.layout = html.Div([
         dcc.Interval(id='timer_progress')]),
     # Allocate space for graphs and tables
     html.Div(id='output-table-upload', style={'width': '45%', 'display': 'inline-block'}),
-    html.Div([
-        dcc.Graph(id='graph1'),
-        dcc.Graph(id='graph2'),
-
+    html.Div([dbc.Tabs([
+        dbc.Tab(dcc.Graph(id='graph1', figure=blank_figure()), label='Pie Chart'),
+        dbc.Tab(dcc.Graph(id='graph2', figure=blank_figure()), label='Bar Chart'),
+    ])
     ], style={'width': '55%', 'display': 'inline-block', 'verticalAlign': 'top', 'height': '80%'})
 
 ])
@@ -181,6 +193,8 @@ def _update_output(list_of_contents, list_of_names):
 
         fig1 = px.pie(data_frame=df_categories, values='total', names='category')
         fig2 = px.bar(data_frame=df, x='date', y='price', labels={'date': 'Date', 'price': 'Total'})
+
+
 
         return tabs, fig1, fig2
 
