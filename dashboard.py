@@ -1,7 +1,10 @@
 import io
+import sys
+
+import matplotlib.pyplot as plt
 from dash import Dash, dcc, html, Input, Output, State, MATCH, ALL
 import dash_bootstrap_components as dbc
-from dash import Dash, html, dcc, Input, Output, State, dash_table
+from dash import Dash, html, dcc, Input, Output, State, dash_table, exceptions
 from dash_bootstrap_templates import load_figure_template
 import datetime
 from main import read_receipt
@@ -10,13 +13,17 @@ from PIL import Image
 import plotly.express as px
 import pandas as pd
 from tabulate import tabulate
+from tqdm import tqdm
+import subprocess
+
+subprocess.check_call(([sys.executable, "-m", "pip", "install", "tqdm"]))
+subprocess.check_call(([sys.executable, "-m", "pip", "install", "dash-bootstrap-components"]))
 
 # Create dash app with themes to look good
 app = Dash(__name__,
            external_stylesheets=[dbc.themes.LUMEN, 'https://codepen.io/chriddyp/pen/bWLwgP.css']
            )
 load_figure_template('LUMEN')
-
 # Build the layout of the app
 app.layout = html.Div([
     html.H1('ReceipTrack', style={'textAlign': 'center'}),
@@ -35,10 +42,19 @@ app.layout = html.Div([
             'margin': '10px'
         },
         multiple=True
-    ), html.Div([
-        dcc.Interval(id='progress-interval', n_intervals=0, interval=500),
-        dbc.Progress(id='progress')
-    ]),
+    ),
+    html.Div([
+        # Component to display upload progress
+        dbc.Progress(id='pbar', striped=True, animated=True,style={
+            'width': '100%',
+            'height': '20px',
+            'lineHeight': '60px',
+            'borderWidth': '1px',
+            'borderRadius': '5px',
+            'margin': '10px',
+        } ),
+        # Component to increment time and auto-update
+        dcc.Interval(id='timer_progress')]),
     # Allocate space for graphs and tables
     html.Div(id='output-table-upload', style={'width': '45%', 'display': 'inline-block'}),
     html.Div([
@@ -61,17 +77,40 @@ def toggle_collapse(n, is_open):
     return is_open
 
 
+@app.callback(
+    Output('pbar', 'value'),
+    Output('pbar', 'label'),
+    Input('timer_progress', 'n_intervals'),
+    prevent_initial_call=True
+)
+def _callback_progress(n_intervals):
+    """Reads in the progress of the main callback from a file"""
+    try:
+        # Read the file and find the percentage value
+        with open('progress.txt', 'r') as file:
+            str_raw = file.read()
+        last_line = list(filter(None, str_raw.split('\n')))[-1]
+        percent = float(last_line.split('%')[0])
+    except:
+        # Set value to 0 if not found
+        percent = 0
+
+    finally:
+        # Return value and formatted string
+        text = f'{percent:.0f}%'
+        return percent, text
+
+
 # Combined callback for the file upload and graphing
-@app.callback(Output('progress', 'value'),
-              Output('progress', 'label'),
-              Output('output-table-upload', 'children'),
-              Output('graph1', 'figure'),
-              Output('graph2', 'figure'),
-              Input('upload-image', 'contents'),
-              State('upload-image', 'filename'),
-              Input('progress-interval', 'n_intervals')
-              )
-def update_output(list_of_contents, list_of_names,n):
+@app.callback(
+    Output('output-table-upload', 'children'),
+    Output('graph1', 'figure'),
+    Output('graph2', 'figure'),
+    Input('upload-image', 'contents'),
+    State('upload-image', 'filename'),
+    prevent_initial_call=True
+)
+def _update_output(list_of_contents, list_of_names):
     if list_of_contents is not None:
         children = []
         recs = []
@@ -80,8 +119,11 @@ def update_output(list_of_contents, list_of_names,n):
         '''html.Div([html.Img(src=contents, style={'display': 'inline-block',
                                                  'width': '50%',
                                                  'margin-left': '10px'})]) for contents'''
-        progress = 0
-        for i in range(len(list_of_contents)):
+
+        # Open progress file
+        file_prog = open('progress.txt', 'w')
+        # Loop runs with tqdm which tracks progress of a for loop and outputs progress to file
+        for i in tqdm(range(len(list_of_contents)), file=file_prog):
             # Split encoded string
             content_type, content_string = list_of_contents[i].split(',')
             rec = content_string
@@ -107,14 +149,17 @@ def update_output(list_of_contents, list_of_names,n):
                                      style={'margin-left': '10px'}))
 
             recs.append(rec)
-            progress = min(i/len(list_of_contents), 100)
+
+        # Clear the file and close it
+        file_prog.truncate(0)
+        file_prog.close()
+
 
         tabs = dbc.Accordion(
             [dbc.AccordionItem(table, title=list_of_names[children.index(table)]) for table in children],
-            )
+        )
 
-    # Use the receipt data to bake a bar chart
-    try:
+        # Use the receipt data to bake a bar chart
         prices = [float(rec.total) for rec in recs]
         dates = [pd.to_datetime(rec.date) for rec in recs]
 
@@ -137,9 +182,8 @@ def update_output(list_of_contents, list_of_names,n):
         fig1 = px.pie(data_frame=df_categories, values='total', names='category')
         fig2 = px.bar(data_frame=df, x='date', y='price', labels={'date': 'Date', 'price': 'Total'})
 
-        return progress, f"{progress} %" if progress >= 5 else "", tabs, fig1, fig2
+        return tabs, fig1, fig2
 
-    except:
-        pass
+
 if __name__ == '__main__':
     app.run_server(debug=False)
