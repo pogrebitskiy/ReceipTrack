@@ -64,9 +64,12 @@ app.layout = html.Div([
             'borderWidth': '1px',
             'borderRadius': '5px',
             'margin': '10px',
-        } ),
+        }),
         # Component to increment time and auto-update
-        dcc.Interval(id='timer_progress')]),
+        dcc.Interval(id='timer_progress')], style={
+        'width': '50%',
+        'margin': 'auto',
+    }),
     # Allocate space for graphs and tables
     html.Div(id='output-table-upload', style={'width': '45%', 'display': 'inline-block'}),
     html.Div([dbc.Tabs([
