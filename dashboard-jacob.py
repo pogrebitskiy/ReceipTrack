@@ -108,8 +108,19 @@ def update_output(list_of_contents):
     df.sort_values(by=['date'], inplace=True)
     df_grouped = df.groupby(by=['date']).sum().reset_index()
 
+    # JACOB ADDED THIS ----
+    category_lst = [category for category in rec.category_dct.keys() for rec in recs]
+    price_lst = [price for price in rec.category_dct.values() for rec in recs]
+    df_categories = pd.DataFrame({'category': category_lst, 'total': price_lst})
+    df_cat_grouped = df_categories.groupby(by=['category']).sum().reset_index()
+    print(df_cat_grouped)
+    # JACOB ----
+
     fig1 = px.bar(data_frame=df, x='date', y='price', labels={'date': 'Date', 'price': 'Total'})
     fig2 = px.line(data_frame=df_grouped, x='date', y='price', labels={'date': 'Date', 'price': 'Total'}, markers=True)
+
+    # fig 3 code
+    #fig3 = px.pie(data_frame = df_cat_grouped, values = 'total', names = 'category')
 
     return children, fig1, fig2
 

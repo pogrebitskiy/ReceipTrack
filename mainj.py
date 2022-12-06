@@ -20,14 +20,8 @@ def read_receipt(filepath):
     return Receipt(text)
 
 if __name__ == '__main__':
-    rec = read_receipt('receipts/receipt-ocr-original.jpg')
+    rec = read_receipt('receipts/Wholefoods_receipt.jpg')
     print(rec.item_df)
     print(rec.category_dct)
-    '''
-    recs = []
-    recs.append(rec)
-    category_lst = [category for category in rec.category_dct.keys() for rec in recs]
-    price_lst = [price for price in rec.category_dct.values() for rec in recs]
-    print(category_lst, price_lst)
-    '''
+
     #print(rec.identification_lst)

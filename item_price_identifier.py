@@ -3,6 +3,7 @@ import itertools
 def find_item_prices(str_lst, total):
     '''To find each item in the receipt and their prices'''
     price_lst = None
+    # try to identify items and prices using the
     try:
         price_lst = combination_method(str_lst, total)
         if price_lst:
@@ -19,7 +20,8 @@ def combination_method(str_lst, total):
     item_lst = []
     price_numbers = []
     # iterate over each line in the receipt
-    for line in str_lst:
+    for i in range(len(str_lst)):
+        line = str_lst[i]
         # separate each line to different elements
         line_lst = line.split(' ')
         item_name = []
@@ -42,6 +44,12 @@ def combination_method(str_lst, total):
                 try:
                     # when buying multiple of an item, we do not want to get the price of one item
                     if line_lst[line_lst.index(elmt) - 1] == '@':
+                        item_name = []
+                        prev_line_lst = str_lst[i-1].split(' ')
+                        for elmt in prev_line_lst:
+                            if elmt.isalpha() and len(elmt) > 1:
+                                item_name.append(elmt.upper())
+                        item_name = ' '.join(item_name)
                         continue
                 except:
                     pass
