@@ -9,6 +9,7 @@ from Food_Identification import categorize_foods
 class Receipt:
     def __init__(self, init_str):
         '''constructor'''
+        # setting up all attributes
         self.str = init_str
         self.str_lst = init_str.split('\n')
         self.date = None
@@ -22,6 +23,8 @@ class Receipt:
         self.ids = None
         self.item_lst = None
         self.identification_lst = None
+        self.category_dct = None
+
 
         # gets the date of the transaction from the receipt
         for line in self.str_lst:
@@ -35,14 +38,6 @@ class Receipt:
                                 self.date = line[idx:idx+8]
                     except:
                         pass
-            '''   
-            # old method
-            try:
-                if line[2] == '/' and line[5] == '/':
-                    self.date = line
-            except:
-                pass
-            '''
 
         # gets the phone number associated with the receipt
         phone = find_phonenumber(self.str_lst)
@@ -70,14 +65,13 @@ class Receipt:
         item_quantity = []
         item_id = []
 
+        # getting the phone number from the list of strings
         for line in self.str_lst:
             split_line = line.strip().split(' ')
             split_line = [val.lower() for val in split_line]
-            #print(split_line)
             for item in split_line:
 
                 try:
-                    #test_item = ''.join(c for c in item if c.isdigit() or c == '.')
                     # checking if an item in the line ends in the style '.XX'
                     if (item[-3] == '.' and item[-2:-1].isnumeric()) or (item.isnumeric() and len(split_line[split_line.index(item) + 1]) == 2):
                         # making sure tax, subtotal, change are not in the line
@@ -112,39 +106,35 @@ class Receipt:
                 except:
                     pass
 
-
-
-
+        # defining test attributes with our lists
         self.items = item_line
         self.costs = item_cost
         self.ids = item_id
         self.quantities = item_quantity
 
+        # working on the list of items more closely, testing the whole list of strings on our total value to find a
+        # subset of items that add up correctly
         price_item_lst = find_item_prices(self.str_lst, self.total)
 
-        '''
-        COMMENTING THIS SECTION OUT BECAUSE THERE ARE PROBLEMS WITH USING THE DF DEFINED IN THE OTHER FILE
-        # identifying all items
-        iden_lst = []
-        for item, price in price_item_lst:
-            print(item)
-            identified = group_identify(item)
-            print(identified)
-            iden_lst.append(identified)
-            
-        self.identification_lst = iden_lst
-        '''
-
+        # creating a dataframe useful for plotting and keeping the data more uniform
         self.item_lst = price_item_lst
         self.item_df = pd.DataFrame(data=price_item_lst, columns=['Item_Name', 'Price'])
-        try:
-            category_lst = [item for item, price in price_item_lst]
-            category_df = pd.DataFrame(data=category_lst, columns=['Item_Name'])
 
-            categorize_foods(category_df)
-            self.category_df = category_df
+        # attempting to categorize foods, will not work on all receipts
+        try:
+            self.item_df = categorize_foods(self.item_df)
         except:
             pass
+
+        # if the item dataframe has categories, finding the sums of items in the categories
+        if len(self.item_df.columns) == 3:
+            self.category_dct = {}
+            for i in range(len(self.item_df)):
+                cur_cat = self.item_df.loc[i,'Category']
+                if cur_cat in self.category_dct:
+                    self.category_dct[cur_cat] += self.item_df.loc[i,'Price']
+                else:
+                    self.category_dct[cur_cat] = self.item_df.loc[i,'Price']
 
 
     def __str__(self):

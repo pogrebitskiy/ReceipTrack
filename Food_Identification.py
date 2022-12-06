@@ -81,7 +81,7 @@ def group_identify(food_df, brand_df, food):
         # split the food into seperate words
         food_split = food.split()
 
-        if row["BRAND"] in food_split:
+        if row["BRAND"].lower() in food_split:
             group = row["DEPARTMENT"]
             break
 
