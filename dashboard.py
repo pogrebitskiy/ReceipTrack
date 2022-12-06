@@ -70,7 +70,7 @@ app.layout = html.Div([
     # Allocate space for graphs and tables
     html.Div(id='output-table-upload', style={'width': '45%', 'display': 'inline-block'}),
     html.Div([dbc.Tabs([
-        dbc.Tab(dcc.Graph(id='graph1', figure=blank_figure()), label='Pie Chart'),
+        dbc.Tab(dcc.Graph(id='graph1', figure=blank_figure()), label='Pie Chart', tabClassName="ms-auto"),
         dbc.Tab(dcc.Graph(id='graph2', figure=blank_figure()), label='Bar Chart'),
     ])
     ], style={'width': '55%', 'display': 'inline-block', 'verticalAlign': 'top', 'height': '80%'})
