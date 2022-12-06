@@ -1,6 +1,7 @@
 import cv2
 import pytesseract
 from Receipt import Receipt
+from Food_Identification import categorize_foods
 import datetime
 import re
 import os
@@ -20,4 +21,4 @@ def read_receipt(filepath):
 
 if __name__ == '__main__':
     rec = read_receipt('receipts/input-9.png')
-    print(rec)
+    print(categorize_foods(rec.item_df))

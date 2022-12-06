@@ -120,7 +120,7 @@ def update_output(list_of_contents):
     fig2 = px.line(data_frame=df_grouped, x='date', y='price', labels={'date': 'Date', 'price': 'Total'}, markers=True)
 
     # fig 3 code
-    #fig3 = px.pie(data_frame = df_cat_grouped, values = 'total', names = 'category')
+    fig3 = px.pie(data_frame = df_cat_grouped, values = 'total', names = 'category')
 
     return children, fig1, fig2
 

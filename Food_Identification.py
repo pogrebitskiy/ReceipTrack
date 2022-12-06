@@ -131,12 +131,14 @@ def categorize_foods(item_df):
 
     # -------------------------------------------------------------------- Label each item
     # iterate over the item df
-    for ind in item_df.index:
-        item_name = item_df['Item_Name'][ind]
+    item_df['Category'] = item_df.apply(lambda x: group_identify(food_data,category_data, x[0]), axis=1)
+
+    """for ind in item_df.index:
+        item_name = item_df.iloc[ind,'Item_Name']
 
         # categorizing each item
         category = group_identify(food_data, category_data, item_name)
-        item_df['Category'][ind] = category
+        categories.append(category)"""
 
     return item_df
 
