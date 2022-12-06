@@ -1,0 +1,12 @@
+dash==2.6.0
+pandas
+cv2
+pytesseract
+itertools
+phonenumbers
+io
+dash_bootstrap_components
+base64
+PIL
+plotly
+dash_bootstrap_templates
