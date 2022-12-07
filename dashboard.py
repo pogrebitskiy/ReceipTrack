@@ -1,18 +1,15 @@
 import io
 import sys
 
-import matplotlib.pyplot as plt
-from dash import Dash, dcc, html, Input, Output, State, MATCH, ALL
+from dash import MATCH
 import dash_bootstrap_components as dbc
-from dash import Dash, html, dcc, Input, Output, State, dash_table, exceptions
+from dash import Dash, html, dcc, Input, Output, State
 from dash_bootstrap_templates import load_figure_template
-import datetime
-from main import read_receipt
+from Receipt import read_receipt
 import base64
 from PIL import Image
 import plotly.express as px
 import pandas as pd
-from tabulate import tabulate
 from tqdm import tqdm
 import subprocess
 import plotly.graph_objects as go
@@ -102,7 +99,7 @@ def _callback_progress(n_intervals):
     """Reads in the progress of the main callback from a file"""
     try:
         # Read the file and find the percentage value
-        with open('progress.txt', 'r') as file:
+        with open('temp/progress.txt', 'r') as file:
             str_raw = file.read()
         last_line = list(filter(None, str_raw.split('\n')))[-1]
         percent = float(last_line.split('%')[0])
@@ -136,7 +133,7 @@ def _update_output(list_of_contents, list_of_names):
                                                  'margin-left': '10px'})]) for contents'''
 
         # Open progress file
-        file_prog = open('progress.txt', 'w')
+        file_prog = open('temp/progress.txt', 'w')
         # Loop runs with tqdm which tracks progress of a for loop and outputs progress to file
         for i in tqdm(range(len(list_of_contents)), file=file_prog):
             # Split encoded string
@@ -145,10 +142,10 @@ def _update_output(list_of_contents, list_of_names):
 
             # Decode the string back to an image
             img = Image.open(io.BytesIO(base64.b64decode(rec)))
-            img.save('temp.jpg')
+            img.save('temp/temp.jpg')
 
             # Read the re-decoded image
-            rec = read_receipt('temp.jpg')
+            rec = read_receipt('temp/temp.jpg')
 
             # Create a table from the receipt
             children.append(html.Div([dbc.Table([html.Tbody([html.Tr([html.Td('Date'), html.Td(rec.date)]),
