@@ -1,10 +1,31 @@
-import datetime
 import re
-import numpy as np
-from phone_identifier import find_phonenumber
-from item_price_identifier import find_item_prices
+from helper_modules.phone_identifier import find_phonenumber
+from helper_modules.item_price_identifier import find_item_prices
 import pandas as pd
-from Food_Identification import categorize_foods
+from helper_modules.Food_Identification import categorize_foods
+import pytesseract
+import cv2
+
+
+def read_receipt(filepath):
+    """
+    Function that reads in a file from a path into a receipt object by calling its constructor
+
+    Code used to find tesseract on Windows, specific to Jacob
+    pytesseract.pytesseract.tesseract_cmd = r"C:/Users/jakul/anaconda3/Library/bin/tesseract.exe"
+
+    """
+
+    img = cv2.imread(filepath, 0)
+    # configurations
+    config = '-l eng --oem 1 --psm 6'
+
+    # Parse text using pytesseract
+    text = pytesseract.image_to_string(img, config=config, lang='eng')
+
+    # Create a Receipt object using the parsed text
+    return Receipt(text)
+
 
 class Receipt:
     def __init__(self, init_str):
@@ -25,17 +46,16 @@ class Receipt:
         self.identification_lst = None
         self.category_dct = None
 
-
         # gets the date of the transaction from the receipt
         for line in self.str_lst:
             if '/' in line:
                 for idx in range(len(line)):
                     try:
-                        if line[idx:idx+2].isnumeric() and line[idx+2] == '/' and line[idx+5] == '/':
-                            if line[idx+8].isnumeric() and line[idx+9].isnumeric():
-                                self.date = line[idx:idx+10]
+                        if line[idx:idx + 2].isnumeric() and line[idx + 2] == '/' and line[idx + 5] == '/':
+                            if line[idx + 8].isnumeric() and line[idx + 9].isnumeric():
+                                self.date = line[idx:idx + 10]
                             else:
-                                self.date = line[idx:idx+8]
+                                self.date = line[idx:idx + 8]
                     except:
                         pass
 
@@ -73,9 +93,10 @@ class Receipt:
 
                 try:
                     # checking if an item in the line ends in the style '.XX'
-                    if (item[-3] == '.' and item[-2:-1].isnumeric()) or (item.isnumeric() and len(split_line[split_line.index(item) + 1]) == 2):
+                    if (item[-3] == '.' and item[-2:-1].isnumeric()) or (
+                            item.isnumeric() and len(split_line[split_line.index(item) + 1]) == 2):
                         # making sure tax, subtotal, change are not in the line
-                        if not any(val in ['total','subtotal','tax','change','visa'] for val in split_line):
+                        if not any(val in ['total', 'subtotal', 'tax', 'change', 'visa'] for val in split_line):
                             if '.' in item:
                                 item_cost.append(item)
 
@@ -94,7 +115,7 @@ class Receipt:
                             if len(non_cost_line[-1]) == 1:
                                 non_cost_line = non_cost_line[:-1]
 
-                            #print(non_cost_line)
+                            # print(non_cost_line)
                             # checking for an id
                             if non_cost_line[-1].isnumeric():
                                 item_id.append(non_cost_line[-1])
@@ -130,12 +151,11 @@ class Receipt:
         if len(self.item_df.columns) == 3:
             self.category_dct = {}
             for i in range(len(self.item_df)):
-                cur_cat = self.item_df.loc[i,'Category']
+                cur_cat = self.item_df.loc[i, 'Category']
                 if cur_cat in self.category_dct:
-                    self.category_dct[cur_cat] += self.item_df.loc[i,'Price']
+                    self.category_dct[cur_cat] += self.item_df.loc[i, 'Price']
                 else:
-                    self.category_dct[cur_cat] = self.item_df.loc[i,'Price']
-
+                    self.category_dct[cur_cat] = self.item_df.loc[i, 'Price']
 
     def __str__(self):
         '''updating print statement'''
