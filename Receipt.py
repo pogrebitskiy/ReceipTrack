@@ -15,6 +15,10 @@ def read_receipt(filepath):
     pytesseract.pytesseract.tesseract_cmd = r"C:/Users/jakul/anaconda3/Library/bin/tesseract.exe"
 
     """
+    # For Windows Users, uncomment the line below and follow the instructions on line 20
+    #pytesseract.pytesseract.tesseract_cmd = r'C:\Users\jakul\anaconda3\Library\bin\tesseract.exe' #<- location of tesseract.exe on your machine
+    # Add PATH and TESSDATA_PREFIX environmental variables, the former points to tesseract.eye and the latter points to the tessdata folder
+    # Example: PATH=C:\Users\jakul\anaconda3\Library\bin\tesseract.exe;TESSDATA_PREFIX=C:\Program Files\Tesseract-OCR\tessdata
 
     img = cv2.imread(filepath, 0)
     # configurations
