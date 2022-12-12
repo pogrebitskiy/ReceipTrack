@@ -1,0 +1,12 @@
+dash_bootstrap_components==1.2.1
+dash=2.7.1
+dash_bootstrap_templates==1.0.7
+base64
+Pillow==9.3.0
+pandas==1.5.2
+tqdm==4.64.1
+plotly==5.11.0
+tesseract-ocr
+tesseract-ocr-eng
+opencv-python==4.6.0.66
+phonenumbers==8.13.2
